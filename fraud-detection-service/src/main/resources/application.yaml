@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: fraud-detection-service
+  data:
+    redis: localhost
+    port: 6379
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: fraud-detection-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.String@Deserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ksoonDeserializer
+      properties:
+        spring:
+          json:
+            trusted:
+              packages: "*"
+            use:
+              type:
+                headers: false
+            value:
+              default:
+                type: java.util.HashMap
+    producer:
+      key-deserializer: org.apache.kafka.common.serialization.String@Deserializer
+      value-deserializer: org.springframework.kafka.support.serializer.ksoonDeserializer
+server:
+  port: 8084
+
+# account service URL for Feign client
+account:
+  service:
+    url:http://account-service:8081
+fraud:
+  max-transactions-per-minute: 5
+  suspicious-amt-multiplier: 5
+  max-balance-percentage: 0.90
+
+management:
+  endpoint:
+    web:
+      exposure:
+        include: health, info
+
